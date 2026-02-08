@@ -2,7 +2,7 @@ import 'package:fitness/Screens/ForgotPasswordPage/forgot_password.dart';
 import 'package:fitness/Screens/HomePage/home_page.dart';
 import 'package:fitness/Screens/SignupPage/signup_page.dart';
 import 'package:fitness/standardData.dart';
-import 'package:flutter/gestures.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -41,12 +41,48 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
+  //to fetch email if an old user
   Future<void> _login() async {
     String? email = await storage.read(key: 'email');
     if (email != null) {
       setState(() {
         _controllers['Email Address']!.text = email;
       });
+    }
+  }
+
+  //to authenticate user
+  Future<void> _authenticate() async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+
+    final email = _controllers['Email Address']!.text;
+    final password = _controllers['Password']!.text;
+    final url = Uri.parse('http://192.168.1.64:8080/api/signin');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'email': email,
+        'password': password,
+      },
+    );
+
+    if (!mounted) return;
+    Navigator.pop(context);
+
+    if (response.statusCode == 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(content: Text("Invalid Credentials")),
+      );
     }
   }
 
@@ -118,16 +154,8 @@ class _LoginFormState extends State<LoginForm> {
                   width: MediaQuery.of(context).size.width * 0.9,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        final email = _controllers['Email Address']!.text;
-                        final password = _controllers['Password']!.text;
-                        await storage.write(key: 'email', value: email);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      }
+                    onPressed: () {
+                      _authenticate();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: StandardData.primaryColor,
