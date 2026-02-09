@@ -16,7 +16,7 @@ class SignupForm extends StatefulWidget {
 }
 
 class _SignupFormState extends State<SignupForm> {
-  bool _isObscrued = true;
+  bool _isObscured = true;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -32,7 +32,7 @@ class _SignupFormState extends State<SignupForm> {
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: TextFormField(
                   controller: widget.controllers[item.key],
-                  obscureText: isPassword ? _isObscrued : false,
+                  obscureText: isPassword ? _isObscured : false,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     prefixIcon: item.key == 'Name'
@@ -44,11 +44,11 @@ class _SignupFormState extends State<SignupForm> {
                         ? IconButton(
                             onPressed: () {
                               setState(() {
-                                _isObscrued = !_isObscrued;
+                                _isObscured = !_isObscured;
                               });
                             },
                             icon: Icon(
-                              _isObscrued
+                              _isObscured
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                             ),

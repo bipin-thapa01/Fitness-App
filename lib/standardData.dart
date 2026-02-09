@@ -7,4 +7,7 @@ class StandardData {
   //colors part
   static const Color primaryColor = Colors.deepPurpleAccent;
   static const Color backgroundColor1 = Color(0xFF292929);
+
+  //url
+  static const String baseUrl = "http://192.168.1.64:8080";
 }

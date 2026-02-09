@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'package:fitness/Screens/LoginPage/login_page.dart';
 import 'package:fitness/Screens/SignupPage/signup_form.dart';
 import 'package:fitness/standardData.dart';
-import 'package:flutter/gestures.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 Map<String, String> requiredField = {
@@ -35,6 +36,38 @@ class _SignupPageState extends State<SignupPage> {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> _createAccount() async {
+    if (_formKey.currentState!.validate()) {
+      final name = _controllers['Name']!.text;
+      final email = _controllers['Email Address']!.text;
+      final password = _controllers['Password']!.text;
+
+      final url = Uri.parse('${StandardData.baseUrl}/api/signup');
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => Center(child: CircularProgressIndicator()),
+      );
+
+      final res = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'name': name, 'email': email, 'password': password}),
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context);
+
+      if (res.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    }
   }
 
   @override
@@ -92,15 +125,7 @@ class _SignupPageState extends State<SignupPage> {
                         backgroundColor: StandardData.primaryColor,
                       ),
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final name = _controllers['Name']!.text;
-                          final email = _controllers['Email Address']!.text;
-                          final password = _controllers['Password']!.text;
-
-                          print(name);
-                          print(email);
-                          print(password);
-                        }
+                        _createAccount();
                       },
                       child: Text("Create Account"),
                     ),

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:fitness/Screens/ForgotPasswordPage/forgot_password.dart';
 import 'package:fitness/Screens/HomePage/home_page.dart';
 import 'package:fitness/Screens/SignupPage/signup_page.dart';
@@ -27,10 +30,10 @@ class _LoginFormState extends State<LoginForm> {
   @override
   void initState() {
     super.initState();
-    _login();
     for (var key in requiredField.keys) {
       _controllers[key] = TextEditingController();
     }
+    _login();
   }
 
   @override
@@ -54,34 +57,50 @@ class _LoginFormState extends State<LoginForm> {
   //to authenticate user
   Future<void> _authenticate() async {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => Center(child: CircularProgressIndicator()),
     );
 
     final email = _controllers['Email Address']!.text;
     final password = _controllers['Password']!.text;
-    final url = Uri.parse('http://192.168.1.64:8080/api/signin');
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'email': email,
-        'password': password,
-      },
-    );
-
-    if (!mounted) return;
-    Navigator.pop(context);
-
-    if (response.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+    final url = Uri.parse('${StandardData.baseUrl}/api/signin');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'email': email,
+          'password': password,
+        },
       );
-    } else {
+
+      final Map<String, dynamic> res = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && res['response'] != "invalid") {
+        await storage.write(key: "email", value: email);
+
+        if (!mounted) return;
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        if (!mounted) return;
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(content: Text("Invalid Credentials")),
+        );
+      }
+    } on SocketException {
+      Navigator.pop(context);
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(content: Text("Invalid Credentials")),
+        builder: (context) =>
+            AlertDialog(content: Text("No internet or Server is offline!")),
       );
     }
   }
