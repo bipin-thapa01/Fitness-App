@@ -80,6 +80,8 @@ class _LoginFormState extends State<LoginForm> {
       if (response.statusCode == 200 && res['response'] != "invalid") {
         await storage.write(key: "email", value: email);
 
+        storage.write(key: 'user', value: jsonEncode(res));
+
         if (!mounted) return;
         Navigator.pop(context);
         Navigator.push(

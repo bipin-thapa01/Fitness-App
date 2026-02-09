@@ -1,12 +1,39 @@
+import 'dart:convert';
+
+import 'package:fitness/Screens/HomePage/home_page.dart';
 import 'package:fitness/Screens/NewUserLanding/new_user_landing_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isFetching = true;
+  final storage = FlutterSecureStorage();
+  Map<String, dynamic>? data;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetch();
+  }
+
+  Future<void> _fetch() async {
+    final encData = await storage.read(key: "user");
+    setState(() {
+      isFetching = false;
+      data = jsonDecode(encData!);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +44,20 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.grey,
       ),
       debugShowCheckedModeBanner: false,
-      home: NewUserLandingPage(),
+      home: isFetching
+          ? Loading()
+          : data != null
+          ? HomePage()
+          : NewUserLandingPage(),
     );
+  }
+}
+
+class Loading extends StatelessWidget {
+  const Loading({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

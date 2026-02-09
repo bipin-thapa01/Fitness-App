@@ -1,5 +1,4 @@
 import 'package:fitness/Screens/LoginPage/login_form.dart';
-import 'package:fitness/standardData.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
