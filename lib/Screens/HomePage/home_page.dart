@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
+import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -35,7 +36,12 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      body: CustomScrollView(slivers: [HomePageAppbar(data: data)]),
+      body: CustomScrollView(
+        slivers: [
+          HomePageAppbar(data: data),
+          SliverToBoxAdapter(child: HomePageCalorie()),
+        ],
+      ),
     );
   }
 }

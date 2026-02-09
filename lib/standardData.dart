@@ -10,5 +10,5 @@ class StandardData {
   static const Color buttonColor1 = Color(0xFF333333);
 
   //url
-  static const String baseUrl = "http://10.0.2.2:8080";
+  static const String baseUrl = "http://192.168.1.64:8080";
 }

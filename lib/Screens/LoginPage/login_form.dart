@@ -84,9 +84,10 @@ class _LoginFormState extends State<LoginForm> {
 
         if (!mounted) return;
         Navigator.pop(context);
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (_) => HomePage()),
+          (route) => false,
         );
       } else {
         if (!mounted) return;

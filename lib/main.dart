@@ -29,10 +29,17 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _fetch() async {
     final encData = await storage.read(key: "user");
-    setState(() {
-      isFetching = false;
-      data = jsonDecode(encData!);
-    });
+    if (encData == null) {
+      setState(() {
+        isFetching = false;
+        data = null;
+      });
+    } else {
+      setState(() {
+        isFetching = false;
+        data = jsonDecode(encData);
+      });
+    }
   }
 
   @override
@@ -58,6 +65,6 @@ class Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Center(child: CircularProgressIndicator());
   }
 }
