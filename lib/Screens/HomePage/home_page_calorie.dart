@@ -82,7 +82,7 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
                           backgroundColor: StandardData.mainColor,
                           progressColor: StandardData.primaryColor,
                           animation: true,
-                          animationDuration: 1200,
+                          animationDuration: 2000,
                           center: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(

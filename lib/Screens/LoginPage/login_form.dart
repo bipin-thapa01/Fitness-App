@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fitness/Screens/ForgotPasswordPage/forgot_password.dart';
 import 'package:fitness/Screens/HomePage/home_page.dart';
+import 'package:fitness/Screens/InitialSetup/initial_setup.dart';
 import 'package:fitness/Screens/SignupPage/signup_page.dart';
 import 'package:fitness/standardData.dart';
 import 'package:http/http.dart' as http;
@@ -84,6 +85,16 @@ class _LoginFormState extends State<LoginForm> {
 
         if (!mounted) return;
         Navigator.pop(context);
+
+        print(res);
+
+        if (res['userDTO']?['initialSetup'] == false) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => InitialSetup()),
+          );
+          return;
+        }
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => HomePage()),

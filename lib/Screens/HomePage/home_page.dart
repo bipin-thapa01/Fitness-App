@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
 import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
+import 'package:fitness/Screens/LoginPage/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -40,6 +41,19 @@ class _HomePageState extends State<HomePage> {
         slivers: [
           HomePageAppbar(data: data),
           SliverToBoxAdapter(child: HomePageCalorie()),
+          SliverToBoxAdapter(
+            child: ElevatedButton(
+              onPressed: () {
+                storage.delete(key: "user");
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => LoginPage()),
+                  (route) => false,
+                );
+              },
+              child: Text("Logout"),
+            ),
+          ),
         ],
       ),
     );
