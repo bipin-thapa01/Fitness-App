@@ -86,8 +86,6 @@ class _LoginFormState extends State<LoginForm> {
         if (!mounted) return;
         Navigator.pop(context);
 
-        print(res);
-
         if (res['userDTO']?['initialSetup'] == false) {
           Navigator.push(
             context,

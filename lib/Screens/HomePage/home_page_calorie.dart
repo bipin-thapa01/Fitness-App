@@ -40,7 +40,7 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 20, bottom: 5, left: 20, right: 20),
       child: Column(
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,

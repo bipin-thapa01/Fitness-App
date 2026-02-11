@@ -1,5 +1,11 @@
+import 'dart:convert';
+
+import 'package:fitness/Screens/HomePage/home_page.dart';
 import 'package:fitness/standardData.dart';
+import 'package:fitness/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 List<Map<String, dynamic>> requiredFields = [
   {'name': 'Age', 'type': 'Input', 'unit': 'years'},
@@ -17,6 +23,7 @@ List<Map<String, dynamic>> requiredFields = [
     'options': ['Slim', 'Normal', 'Athletic', 'Bulky'],
   },
 ];
+final storage = FlutterSecureStorage();
 
 class InitialSetupForm extends StatefulWidget {
   const InitialSetupForm({super.key});
@@ -59,44 +66,79 @@ class _InitialSetupFormState extends State<InitialSetupForm> {
       String weight = _controllers['Weight']!.text;
       String targetWeight = _controllers['Target Weight']!.text;
       String? targetBodyType = _selectedOptions['Target Body Type'];
+      final encUser = await storage.read(key: "user");
+      final user = jsonDecode(encUser!);
+
+      if (user == null) {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Util.showAlertBox(context, "Error! Try to Login again");
+          },
+        );
+        return;
+      }
+
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Center(child: CircularProgressIndicator());
+        },
+      );
+
+      final url = Uri.parse('${StandardData.baseUrl}/api/initial-setup');
+
+      final res = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'age': age,
+          'gender': gender,
+          'height': height,
+          'weight': weight,
+          'goalWeight': targetWeight,
+          'targetBody': targetBodyType,
+          'username': user['userDTO']['username'],
+        }),
+      );
+
+      final Map<String, dynamic> response = jsonDecode(res.body);
+      if (res.statusCode == 200 && response['response'] == 'valid') {
+        if (!mounted) return;
+        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage()),
+          (route) => false,
+        );
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Util.showAlertBox(context, "Welcome User!");
+          },
+        );
+      } else {
+        if (!mounted) return;
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Util.showAlertBox(
+              context,
+              "Internal Server Error! Try again later.",
+            );
+          },
+        );
+      }
     } else {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.only(top: 40, left: 10, right: 10),
-            content: SizedBox(
-              height: 100,
-              child: Column(
-                spacing: 10,
-                children: [
-                  Row(
-                    spacing: 10,
-                    children: [
-                      Icon(
-                        Icons.info_outline_rounded,
-                        color: StandardData.primaryColor,
-                      ),
-                      Expanded(
-                        child: Text("Please fill all the required fields!"),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: StandardData.primaryColor,
-                      ),
-                      child: Text("Ok"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          return Util.showAlertBox(
+            context,
+            "Please fill all the required fields!",
           );
         },
       );
@@ -163,6 +205,14 @@ class _InitialSetupFormState extends State<InitialSetupForm> {
                   dropdownMenuEntries: options.map((option) {
                     return DropdownMenuEntry(value: option, label: option);
                   }).toList(),
+                  menuStyle: MenuStyle(
+                    padding: WidgetStateProperty.all(EdgeInsets.all(0)),
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
                 );
               }
             }),

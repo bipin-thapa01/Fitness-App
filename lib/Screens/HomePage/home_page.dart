@@ -41,19 +41,6 @@ class _HomePageState extends State<HomePage> {
         slivers: [
           HomePageAppbar(data: data),
           SliverToBoxAdapter(child: HomePageCalorie()),
-          SliverToBoxAdapter(
-            child: ElevatedButton(
-              onPressed: () {
-                storage.delete(key: "user");
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => LoginPage()),
-                  (route) => false,
-                );
-              },
-              child: Text("Logout"),
-            ),
-          ),
         ],
       ),
     );
