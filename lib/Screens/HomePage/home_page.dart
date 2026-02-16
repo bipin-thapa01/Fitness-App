@@ -2,10 +2,36 @@ import 'dart:convert';
 
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
 import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
-import 'package:fitness/Screens/LoginPage/login_page.dart';
 import 'package:fitness/standardData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final List<Map<String, dynamic>> popupButtons = [
+  {
+    'key1': 'Food Barcode',
+    'value1': Icon(Icons.qr_code),
+    'key2': 'Search Food',
+    'value2': Icon(Icons.search),
+    'onTap1': () {
+      print("Food Barcode");
+    },
+    'onTap2': () {
+      print("Search Food");
+    },
+  },
+  {
+    'key1': 'Scan Meal',
+    'value1': Icon(Icons.camera_alt),
+    'key2': 'Add Meal',
+    'value2': Icon(Icons.add),
+    'onTap1': () {
+      print("Scan Meal");
+    },
+    'onTap2': () {
+      print("Add Meal");
+    },
+  },
+];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -52,11 +78,10 @@ class _HomePageState extends State<HomePage> {
             context: context,
             builder: (context) {
               return DraggableScrollableSheet(
-                initialChildSize: 0.5,
-                maxChildSize: 0.5,
+                initialChildSize: 0.35,
                 expand: false,
                 builder: (context, scrollController) {
-                  return Container(child: CustomScrollView(slivers: []));
+                  return HomePageQRPopup();
                 },
               );
             },
@@ -100,6 +125,84 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class HomePageQRPopup extends StatefulWidget {
+  const HomePageQRPopup({super.key});
+
+  @override
+  State<HomePageQRPopup> createState() => _HomePageQRPopupState();
+}
+
+class _HomePageQRPopupState extends State<HomePageQRPopup> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Center(
+              child: Container(
+                width: 30,
+                height: 4,
+                decoration: BoxDecoration(color: StandardData.primaryColor),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+              child: Column(
+                spacing: 20,
+                children: [
+                  ...popupButtons.map((item) {
+                    return Row(
+                      spacing: 20,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: item['onTap1'],
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: StandardData.backgroundColor1,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [item['value1'], Text(item['key1'])],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: item['onTap2'],
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: StandardData.backgroundColor1,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [item['value2'], Text(item['key2'])],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
