@@ -1,11 +1,21 @@
 import 'dart:convert';
-
+import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:fitness/Screens/HomePage/home_page.dart';
 import 'package:fitness/Screens/NewUserLanding/new_user_landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+void initOpenFoodFacts() {
+  OpenFoodAPIConfiguration.userAgent = UserAgent(
+    name: 'fitness_app',
+    version: '1.0',
+  );
+  OpenFoodAPIConfiguration.globalLanguages = [OpenFoodFactsLanguage.ENGLISH];
+  OpenFoodAPIConfiguration.globalCountry = OpenFoodFactsCountry.NEPAL;
+}
+
 void main() {
+  initOpenFoodFacts();
   runApp(MyApp());
 }
 

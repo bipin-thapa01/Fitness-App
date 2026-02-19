@@ -1,37 +1,11 @@
 import 'dart:convert';
 
+import 'package:fitness/Screens/FoodBarcode/food_barcode.dart';
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
 import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
 import 'package:fitness/standardData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-final List<Map<String, dynamic>> popupButtons = [
-  {
-    'key1': 'Food Barcode',
-    'value1': Icon(Icons.qr_code),
-    'key2': 'Search Food',
-    'value2': Icon(Icons.search),
-    'onTap1': () {
-      print("Food Barcode");
-    },
-    'onTap2': () {
-      print("Search Food");
-    },
-  },
-  {
-    'key1': 'Scan Meal',
-    'value1': Icon(Icons.camera_alt),
-    'key2': 'Add Meal',
-    'value2': Icon(Icons.add),
-    'onTap1': () {
-      print("Scan Meal");
-    },
-    'onTap2': () {
-      print("Add Meal");
-    },
-  },
-];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -140,6 +114,36 @@ class HomePageQRPopup extends StatefulWidget {
 class _HomePageQRPopupState extends State<HomePageQRPopup> {
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> popupButtons = [
+      {
+        'key1': 'Food Barcode',
+        'value1': Icon(Icons.qr_code, color: StandardData.iconColor2),
+        'key2': 'Search Food',
+        'value2': Icon(Icons.search, color: StandardData.iconColor1),
+        'onTap1': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FoodBarcode()),
+          );
+        },
+        'onTap2': () {
+          print("Search Food");
+        },
+      },
+      {
+        'key1': 'Scan Meal',
+        'value1': Icon(Icons.camera_alt, color: StandardData.iconColor1),
+        'key2': 'Add Meal',
+        'value2': Icon(Icons.add, color: StandardData.iconColor2),
+        'onTap1': () {
+          print("Scan Meal");
+        },
+        'onTap2': () {
+          print("Add Meal");
+        },
+      },
+    ];
+
     return Padding(
       padding: const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
       child: CustomScrollView(
@@ -147,15 +151,18 @@ class _HomePageQRPopupState extends State<HomePageQRPopup> {
           SliverToBoxAdapter(
             child: Center(
               child: Container(
-                width: 30,
-                height: 4,
-                decoration: BoxDecoration(color: StandardData.primaryColor),
+                width: 35,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: StandardData.primaryColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
               child: Column(
                 spacing: 20,
                 children: [
