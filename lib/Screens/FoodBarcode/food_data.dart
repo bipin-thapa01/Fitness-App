@@ -11,6 +11,6 @@ class FoodData extends StatefulWidget {
 class _FoodDataState extends State<FoodData> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Text(widget.product['image']));
+    return Scaffold(body: Text(widget.product['name']));
   }
 }
