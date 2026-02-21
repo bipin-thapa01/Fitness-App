@@ -146,67 +146,64 @@ class _HomePageQRPopupState extends State<HomePageQRPopup> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Center(
-              child: Container(
-                width: 35,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: StandardData.primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              width: 35,
+              height: 6,
+              decoration: BoxDecoration(
+                color: StandardData.primaryColor,
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
-              child: Column(
-                spacing: 20,
-                children: [
-                  ...popupButtons.map((item) {
-                    return Row(
-                      spacing: 20,
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: item['onTap1'],
-                            child: Container(
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: StandardData.backgroundColor1,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [item['value1'], Text(item['key1'])],
-                              ),
+
+          Padding(
+            padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+            child: Column(
+              spacing: 20,
+              children: [
+                ...popupButtons.map((item) {
+                  return Row(
+                    spacing: 20,
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: item['onTap1'],
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: StandardData.backgroundColor1,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [item['value1'], Text(item['key1'])],
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: item['onTap2'],
-                            child: Container(
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: StandardData.backgroundColor1,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [item['value2'], Text(item['key2'])],
-                              ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: item['onTap2'],
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: StandardData.backgroundColor1,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [item['value2'], Text(item['key2'])],
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  }),
-                ],
-              ),
+                      ),
+                    ],
+                  );
+                }),
+              ],
             ),
           ),
         ],
