@@ -60,33 +60,33 @@ class _FoodBarcodeState extends State<FoodBarcode> {
           productDetails['category'] = result.product?.categories ?? 'Unknown';
           productDetails['image'] = result.product?.imageFrontUrl ?? 'Unknown';
           productDetails['serving_size'] =
-              result.product?.servingSize ?? 'Unknown';
+              result.product?.servingSize ?? 'null';
           productDetails['serving_quantity'] =
-              result.product?.servingQuantity ?? 'Unknown';
+              result.product?.servingQuantity ?? 'null';
           productDetails['protein'] =
               result.product?.nutriments?.getValue(
                 Nutrient.proteins,
                 PerSize.oneHundredGrams,
               ) ??
-              'Unknown';
+              'null';
           productDetails['carbs'] =
               result.product?.nutriments?.getValue(
                 Nutrient.carbohydrates,
                 PerSize.oneHundredGrams,
               ) ??
-              'Unknown';
+              'null';
           productDetails['fat'] =
               result.product?.nutriments?.getValue(
                 Nutrient.fat,
                 PerSize.oneHundredGrams,
               ) ??
-              'Unknown';
+              'null';
           productDetails['sugar'] =
               result.product?.nutriments?.getValue(
                 Nutrient.sugars,
                 PerSize.oneHundredGrams,
               ) ??
-              'Unknown';
+              'null';
         });
       }
 
@@ -217,6 +217,21 @@ class _FoodBarcodeState extends State<FoodBarcode> {
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       color: StandardData.primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.65,
+                ),
+                child: Center(
+                  child: Text(
+                    "Fitness App",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: StandardData.primaryColor,
+                      fontSize: 24,
                     ),
                   ),
                 ),
