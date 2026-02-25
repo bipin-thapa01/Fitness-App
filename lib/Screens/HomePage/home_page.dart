@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:fitness/Screens/FoodBarcode/food_barcode.dart';
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
 import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
+import 'package:fitness/Screens/Progress/progress.dart';
+import 'package:fitness/Screens/Settings/settings.dart';
+import 'package:fitness/Screens/Workout/workout.dart';
 import 'package:fitness/standardData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -15,6 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
   final storage = FlutterSecureStorage();
   Map<String, dynamic>? data;
 
@@ -38,12 +42,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          HomePageAppbar(data: data),
-          SliverToBoxAdapter(child: HomePageCalorie()),
-        ],
-      ),
       floatingActionButton: IconButton(
         iconSize: 30,
         onPressed: () {
@@ -65,41 +63,61 @@ class _HomePageState extends State<HomePage> {
         style: IconButton.styleFrom(backgroundColor: StandardData.primaryColor),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        height: 65,
-        color: Theme.of(context).scaffoldBackgroundColor,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Icon(Icons.dashboard),
-                Text("Dashboard", style: TextStyle(fontSize: 12)),
-              ],
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        indicatorColor: Theme.of(context).primaryColor,
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(
+              Icons.dashboard,
+              color: StandardData.primaryColor,
             ),
-            Column(
-              children: [
-                Icon(Icons.fitness_center),
-                Text("Workout", style: TextStyle(fontSize: 12)),
-              ],
+            label: "Dashboard",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.fitness_center_outlined),
+            selectedIcon: Icon(
+              Icons.fitness_center,
+              color: StandardData.primaryColor,
             ),
-            Column(
-              children: [
-                Icon(Icons.calendar_month),
-                Text("Progress", style: TextStyle(fontSize: 12)),
-              ],
+            label: "Workout",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month_outlined),
+            selectedIcon: Icon(
+              Icons.calendar_month,
+              color: StandardData.primaryColor,
             ),
-            Column(
-              children: [
-                Icon(Icons.settings),
-                Text("Settings", style: TextStyle(fontSize: 12)),
-              ],
+            label: "Progress",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(
+              Icons.settings,
+              color: StandardData.primaryColor,
             ),
+            label: "Settings",
+          ),
+        ],
+      ),
+      body: <Widget>[
+        CustomScrollView(
+          slivers: [
+            HomePageAppbar(data: data),
+            SliverToBoxAdapter(child: HomePageCalorie()),
           ],
         ),
-      ),
+        Workout(),
+        Progress(),
+        Settings(),
+      ][_selectedIndex],
     );
   }
 }
