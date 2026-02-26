@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fitness/Screens/FoodBarcode/food_barcode.dart';
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
@@ -9,6 +10,7 @@ import 'package:fitness/Screens/Workout/workout.dart';
 import 'package:fitness/standardData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final storage = FlutterSecureStorage();
   Map<String, dynamic>? data;
+  Map<String, dynamic>? dailyDetails;
 
   @override
   void initState() {
@@ -29,10 +32,44 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetch() async {
+    final bool isAlreadySet = await storage.containsKey(key: "dailyDetails");
+    if (!isAlreadySet) {
+      storage.write(
+        key: "dailyDetails",
+        value: jsonEncode({
+          'calorieExpend': 0.0,
+          'calorieConsumed': 0.0,
+          'date': DateTime.now().toIso8601String().split('T')[0],
+        }),
+      );
+    }
+    String today = DateTime.now().toIso8601String().split('T')[0];
     final encData = await storage.read(key: "user");
     setState(() {
       data = jsonDecode(encData!);
     });
+    final email = await storage.read(key: "email");
+    try {
+      final url = Uri.parse('${StandardData.baseUrl}/api/initial-data');
+      final res = await http.get(
+        url,
+        headers: {'email': email ?? '', 'date': today},
+      );
+      dailyDetails = jsonDecode(res.body);
+      storage.write(
+        key: "dailyDetails",
+        value: jsonEncode({
+          'calorieExpend': dailyDetails?['calorieExpend'],
+          'calorieConsumed': dailyDetails?['calorieConsumed'],
+          'date': dailyDetails?['date'],
+        }),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No internet or Server is offline!")),
+      );
+    }
   }
 
   @override

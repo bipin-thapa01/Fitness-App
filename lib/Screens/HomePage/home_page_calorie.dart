@@ -24,21 +24,21 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
     'Nov',
     'Dec',
   ];
-  List<List<dynamic>> details = [
-    [
-      Icon(Icons.restaurant_menu, color: StandardData.iconColor1),
-      "Consumed",
-      "2000",
-    ],
-    [
-      Icon(Icons.local_fire_department, color: StandardData.iconColor2),
-      "Burned",
-      "1000",
-    ],
-  ];
   DateTime now = DateTime.now();
   @override
   Widget build(BuildContext context) {
+    List<List<dynamic>> details = [
+      [
+        Icon(Icons.restaurant_menu, color: StandardData.iconColor1),
+        "Consumed",
+        '2000',
+      ],
+      [
+        Icon(Icons.local_fire_department, color: StandardData.iconColor2),
+        "Burned",
+        '2000',
+      ],
+    ];
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 5, left: 20, right: 20),
       child: Column(
