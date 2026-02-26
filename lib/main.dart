@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fitness/Screens/LoginPage/login_page.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:fitness/Screens/HomePage/home_page.dart';
 import 'package:fitness/Screens/NewUserLanding/new_user_landing_page.dart';
@@ -30,6 +31,7 @@ class _MyAppState extends State<MyApp> {
   bool isFetching = true;
   final storage = FlutterSecureStorage();
   Map<String, dynamic>? data;
+  late String email;
 
   @override
   void initState() {
@@ -37,8 +39,14 @@ class _MyAppState extends State<MyApp> {
     _fetch();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _fetch() async {
     final encData = await storage.read(key: "user");
+    email = (await storage.read(key: "email"))!;
     if (encData == null) {
       setState(() {
         isFetching = false;
@@ -65,7 +73,9 @@ class _MyAppState extends State<MyApp> {
           ? Loading()
           : data != null
           ? HomePage()
-          : NewUserLandingPage(),
+          : email == ''
+          ? NewUserLandingPage()
+          : LoginPage(),
     );
   }
 }
