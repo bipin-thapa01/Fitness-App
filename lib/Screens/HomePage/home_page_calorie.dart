@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class HomePageCalorie extends StatefulWidget {
-  const HomePageCalorie({super.key});
+  final Map<String, dynamic> dailyDetails;
+  const HomePageCalorie({super.key, required this.dailyDetails});
 
   @override
   State<HomePageCalorie> createState() => _HomePageCalorieState();
@@ -25,20 +26,39 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
     'Dec',
   ];
   DateTime now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    Color progressColor = StandardData.primaryColor;
     List<List<dynamic>> details = [
       [
         Icon(Icons.restaurant_menu, color: StandardData.iconColor1),
         "Consumed",
-        '2000',
+        widget.dailyDetails['calorieConsumed'].toString(),
       ],
       [
         Icon(Icons.local_fire_department, color: StandardData.iconColor2),
         "Burned",
-        '2000',
+        widget.dailyDetails['calorieExpend'].toString(),
       ],
+      [Icon(Icons.flag, color: Colors.green), "Daily Goal", "2000"],
     ];
+    double percentRatio =
+        ((widget.dailyDetails['calorieConsumed'] -
+                    widget.dailyDetails['calorieExpend']) /
+                2000 *
+                100)
+            .round() /
+        100;
+    if (percentRatio > 1) {
+      percentRatio = 1;
+      progressColor = Colors.red;
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 5, left: 20, right: 20),
       child: Column(
@@ -77,16 +97,16 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
                         CircularPercentIndicator(
                           radius: 55,
                           lineWidth: 8,
-                          percent: 0.8,
+                          percent: percentRatio,
                           circularStrokeCap: CircularStrokeCap.round,
                           backgroundColor: StandardData.mainColor,
-                          progressColor: StandardData.primaryColor,
+                          progressColor: progressColor,
                           animation: true,
                           animationDuration: 2000,
                           center: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text: "80%\n",
+                              text: "${(percentRatio * 100)}%\n",
                               children: [
                                 TextSpan(
                                   text: "done",
@@ -106,7 +126,7 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
                   Expanded(
                     flex: 3,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 24),
+                      padding: const EdgeInsets.only(top: 15),
                       child: Column(
                         spacing: 10,
                         children: [
@@ -126,7 +146,7 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
                                       ),
                                     ),
                                     Text(
-                                      item[2],
+                                      '${item[2]} cal',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),

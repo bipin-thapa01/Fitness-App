@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:fitness/Screens/FoodBarcode/food_barcode.dart';
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
 import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
+import 'package:fitness/Screens/HomePage/home_page_skill.dart';
 import 'package:fitness/Screens/Progress/progress.dart';
 import 'package:fitness/Screens/Settings/settings.dart';
 import 'package:fitness/Screens/Workout/workout.dart';
@@ -37,8 +38,8 @@ class _HomePageState extends State<HomePage> {
       storage.write(
         key: "dailyDetails",
         value: jsonEncode({
-          'calorieExpend': 0.0,
-          'calorieConsumed': 0.0,
+          'calorieExpend': '0.0',
+          'calorieConsumed': '0.0',
           'date': DateTime.now().toIso8601String().split('T')[0],
         }),
       );
@@ -55,16 +56,23 @@ class _HomePageState extends State<HomePage> {
         url,
         headers: {'email': email ?? '', 'date': today},
       );
-      dailyDetails = jsonDecode(res.body);
+      setState(() {
+        dailyDetails = jsonDecode(res.body);
+      });
       storage.write(
         key: "dailyDetails",
         value: jsonEncode({
-          'calorieExpend': dailyDetails?['calorieExpend'],
-          'calorieConsumed': dailyDetails?['calorieConsumed'],
+          'calorieExpend': dailyDetails?['calorieExpend'].toString(),
+          'calorieConsumed': dailyDetails?['calorieConsumed'].toString(),
           'date': dailyDetails?['date'],
         }),
       );
     } catch (e) {
+      setState(() async {
+        dailyDetails = jsonDecode(
+          await storage.read(key: "dailyDetails") ?? '{}',
+        );
+      });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("No internet or Server is offline!")),
@@ -73,8 +81,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (data == null) {
+    if (data == null || dailyDetails == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
@@ -148,7 +161,10 @@ class _HomePageState extends State<HomePage> {
         CustomScrollView(
           slivers: [
             HomePageAppbar(data: data),
-            SliverToBoxAdapter(child: HomePageCalorie()),
+            SliverToBoxAdapter(
+              child: HomePageCalorie(dailyDetails: dailyDetails!),
+            ),
+            SliverToBoxAdapter(child: HomePageSkill()),
           ],
         ),
         Workout(),
