@@ -33,13 +33,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetch() async {
+    setState(() {
+      dailyDetails = {
+        'calorieExpend': 0.0,
+        'calorieConsumed': 0.0,
+        'date': DateTime.now().toIso8601String().split('T')[0],
+      };
+    });
     final bool isAlreadySet = await storage.containsKey(key: "dailyDetails");
     if (!isAlreadySet) {
       storage.write(
         key: "dailyDetails",
         value: jsonEncode({
-          'calorieExpend': '0.0',
-          'calorieConsumed': '0.0',
+          'calorieExpend': 0.0,
+          'calorieConsumed': 0.0,
           'date': DateTime.now().toIso8601String().split('T')[0],
         }),
       );
@@ -62,16 +69,15 @@ class _HomePageState extends State<HomePage> {
       storage.write(
         key: "dailyDetails",
         value: jsonEncode({
-          'calorieExpend': dailyDetails?['calorieExpend'].toString(),
-          'calorieConsumed': dailyDetails?['calorieConsumed'].toString(),
+          'calorieExpend': dailyDetails?['calorieExpend'],
+          'calorieConsumed': dailyDetails?['calorieConsumed'],
           'date': dailyDetails?['date'],
         }),
       );
     } catch (e) {
-      setState(() async {
-        dailyDetails = jsonDecode(
-          await storage.read(key: "dailyDetails") ?? '{}',
-        );
+      final stored = await storage.read(key: "dailyDetails");
+      setState(() {
+        dailyDetails = jsonDecode(stored ?? '{}');
       });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

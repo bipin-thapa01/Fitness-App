@@ -48,16 +48,25 @@ class _HomePageCalorieState extends State<HomePageCalorie> {
       ],
       [Icon(Icons.flag, color: Colors.green), "Daily Goal", "2000"],
     ];
-    double percentRatio =
-        ((widget.dailyDetails['calorieConsumed'] -
-                    widget.dailyDetails['calorieExpend']) /
-                2000 *
-                100)
-            .round() /
-        100;
+    double consumed =
+        double.tryParse(widget.dailyDetails['calorieConsumed'].toString()) ??
+        0.0;
+
+    double burned =
+        double.tryParse(widget.dailyDetails['calorieExpend'].toString()) ?? 0.0;
+
+    double percentRatio = (consumed - burned) / 2000;
+
+    percentRatio = (percentRatio * 100).round() / 100;
+
     if (percentRatio > 1) {
       percentRatio = 1;
       progressColor = Colors.red;
+    }
+
+    if (percentRatio < 0) {
+      percentRatio = 0;
+      progressColor = Colors.white;
     }
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 5, left: 20, right: 20),
