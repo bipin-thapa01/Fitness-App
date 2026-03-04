@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:fitness/Screens/FoodBarcode/food_barcode.dart';
 import 'package:fitness/Screens/HomePage/home_page_appbar.dart';
 import 'package:fitness/Screens/HomePage/home_page_calorie.dart';
@@ -48,6 +46,7 @@ class _HomePageState extends State<HomePage> {
           'calorieExpend': 0.0,
           'calorieConsumed': 0.0,
           'date': DateTime.now().toIso8601String().split('T')[0],
+          'habits': [],
         }),
       );
     }
@@ -72,6 +71,7 @@ class _HomePageState extends State<HomePage> {
           'calorieExpend': dailyDetails?['calorieExpend'],
           'calorieConsumed': dailyDetails?['calorieConsumed'],
           'date': dailyDetails?['date'],
+          'habits': dailyDetails?['habits'],
         }),
       );
     } catch (e) {
@@ -170,7 +170,9 @@ class _HomePageState extends State<HomePage> {
             SliverToBoxAdapter(
               child: HomePageCalorie(dailyDetails: dailyDetails!),
             ),
-            SliverToBoxAdapter(child: HomePageSkill()),
+            SliverToBoxAdapter(
+              child: HomePageSkill(data: dailyDetails?['habits'] ?? []),
+            ),
           ],
         ),
         Workout(),
