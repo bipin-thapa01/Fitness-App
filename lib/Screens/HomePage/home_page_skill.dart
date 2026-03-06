@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:fitness/standardData.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class HomePageSkill extends StatefulWidget {
   final List<dynamic> data;
@@ -12,7 +16,6 @@ class HomePageSkill extends StatefulWidget {
 class _HomePageSkillState extends State<HomePageSkill> {
   @override
   Widget build(BuildContext context) {
-    print(widget.data);
     List<Map<String, dynamic>> habits = List<Map<String, dynamic>>.from(
       widget.data,
     );
@@ -107,6 +110,26 @@ class AddNewHabit extends StatefulWidget {
 }
 
 class _AddNewHabitState extends State<AddNewHabit> {
+  final storage = FlutterSecureStorage();
+  final _key = GlobalKey<FormState>();
+  final TextEditingController _habit = TextEditingController();
+
+  Future<void> _addHabit() async {
+    if (!_key.currentState!.validate()) return;
+    final String habit = _habit.text;
+    final encUser = await storage.read(key: "user");
+    final user = await jsonDecode(encUser!);
+    final id = user['userDTO']['id'];
+    final url = Uri.parse("${StandardData.baseUrl}/api/add-habit");
+    final res = await http.post(
+      url,
+      headers: {'content-type': 'application/json'},
+      body: jsonEncode({'habit': habit, 'userId': id}),
+    );
+    final decResponse = jsonDecode(res.body);
+    print(decResponse);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -135,9 +158,11 @@ class _AddNewHabitState extends State<AddNewHabit> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             Form(
+              key: _key,
               child: Column(
                 children: [
                   TextFormField(
+                    controller: _habit,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Theme.of(context).primaryColor,
@@ -161,7 +186,9 @@ class _AddNewHabitState extends State<AddNewHabit> {
                       spacing: 20,
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _addHabit();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: StandardData.primaryColor
                                 .withAlpha(90),
