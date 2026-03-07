@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+List<Map<String, dynamic>> habits = [];
+
 class HomePageSkill extends StatefulWidget {
   final List<dynamic> data;
   const HomePageSkill({super.key, required this.data});
@@ -15,10 +17,13 @@ class HomePageSkill extends StatefulWidget {
 
 class _HomePageSkillState extends State<HomePageSkill> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> habits = List<Map<String, dynamic>>.from(
-      widget.data,
-    );
+    habits = List<Map<String, dynamic>>.from(widget.data);
     return Container(
       margin: EdgeInsets.only(top: 10, left: 20, right: 20),
       padding: EdgeInsets.all(10),
@@ -44,7 +49,13 @@ class _HomePageSkillState extends State<HomePageSkill> {
                 isScrollControlled: true,
                 context: context,
                 builder: (context) {
-                  return AddNewHabit();
+                  return AddNewHabit(
+                    onHabitAdded: (newHabit) {
+                      setState(() {
+                        widget.data.add({"habit": newHabit});
+                      });
+                    },
+                  );
                 },
               );
             },
@@ -103,7 +114,8 @@ class _HomePageSkillState extends State<HomePageSkill> {
 }
 
 class AddNewHabit extends StatefulWidget {
-  const AddNewHabit({super.key});
+  final Function(String)? onHabitAdded;
+  const AddNewHabit({super.key, this.onHabitAdded});
 
   @override
   State<AddNewHabit> createState() => _AddNewHabitState();
@@ -127,7 +139,20 @@ class _AddNewHabitState extends State<AddNewHabit> {
       body: jsonEncode({'habit': habit, 'userId': id}),
     );
     final decResponse = jsonDecode(res.body);
-    print(decResponse);
+    if (res.statusCode == 200 && decResponse['response'] == 'success') {
+      Navigator.pop(context);
+      if (widget.onHabitAdded != null) {
+        widget.onHabitAdded!(habit);
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("New Habit Successfully Added!"),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 16),
+        ),
+      );
+    }
   }
 
   @override

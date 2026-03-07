@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
         'calorieExpend': 0.0,
         'calorieConsumed': 0.0,
         'date': DateTime.now().toIso8601String().split('T')[0],
+        'habits': [],
       };
     });
     final bool isAlreadySet = await storage.containsKey(key: "dailyDetails");
@@ -81,7 +82,11 @@ class _HomePageState extends State<HomePage> {
       });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No internet or Server is offline!")),
+        SnackBar(
+          content: Text("No internet or Server is offline!"),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 16),
+        ),
       );
     }
   }
